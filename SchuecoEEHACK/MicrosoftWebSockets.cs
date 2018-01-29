@@ -94,6 +94,17 @@ namespace SchuecoEEHACK
                                 }
                                 SendValue("sun_state");
                                 break;
+                            case "air_state":
+                                var air_state = set_value.value.ToString();
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    {
+                                        room.AirState = air_state;
+                                    }
+                                }
+                                SendValue("air_state");
+                                break;
                         }
                         break;
                 }
@@ -161,6 +172,12 @@ namespace SchuecoEEHACK
                      json = JsonConvert.SerializeObject(sunState);
                     SendJsonToAllClients(json);
                     break;
+
+                case "air_state":
+                    var airState = new Json.SetValue() { type = "property_update", value_name = "air_state", value = GetRoom().AirState };
+                    json = JsonConvert.SerializeObject(airState);
+                    SendJsonToAllClients(json);
+                    break;
             }
         }
 
@@ -184,6 +201,8 @@ namespace SchuecoEEHACK
                 Send(JsonConvert.SerializeObject(ambientTemp));
                 var sunState = new Json.SetValue() { type = "property_update", value_name = "sun_state", value = room.SunState };
                 Send(JsonConvert.SerializeObject(sunState));
+                var airState = new Json.SetValue() { type = "property_update", value_name = "air_state", value = room.AirState};
+                Send(JsonConvert.SerializeObject(airState));
             }
         }
     }

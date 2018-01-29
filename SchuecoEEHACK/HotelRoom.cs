@@ -12,11 +12,13 @@ namespace SchuecoEEHACK
         public int Number { get; private set; }
         public double AmbientTemperature { get; set; }
         public string SunState { get; set; }
+        public string AirState { get; set; }
         public HotelRoom(int number)
         {
             Number = number;
             AmbientTemperature = 15;
             SunState = "Cloudy";
+            AirState = "Used Air";
         }
     }
 }

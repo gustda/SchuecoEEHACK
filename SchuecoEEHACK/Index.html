@@ -10,11 +10,11 @@
     
 
     <script type="text/javascript" charset="utf-8">
-
+        var ws;
         window.onload = function () {                 //  var url = "ws://localhost:8733/Design_Time_Addresses/WebSocketServer/WebSocketServer?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
-            //var url = "ws://localhost:50911/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
-            var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
-             var ws = new WebSocket(url);
+            var url = "ws://localhost:50911/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+            //var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+             ws = new WebSocket(url);
 
             document.getElementById("defaultOpen").click();
 
@@ -42,11 +42,13 @@
                             case "sun_state":
                                 document.getElementById("sun_state").value = myObj.value;
                                 break;
+                            case "air_state":
+                                document.getElementById("air_state").value = myObj.value;
+                                break;
                         }
                         break;
                 }
-
-                logOutTemp(e.data.toString());
+                
             }
 
             ws.onclose = function () {
@@ -88,6 +90,7 @@
                 ws.send(myJSON);
             }
 
+         
             document.getElementById("IncreaseSunState").onclick = function () {
                 var text = $("#sun_state").val();
                 if (text == "Dark")
@@ -122,15 +125,96 @@
                 ws.send("Send Value AM4:" + $("#ValueAM").val());
             }
         }
-
-        function logOutTemp(s) {
-            document.getElementById("outTemp").value = s;
-        }
+        
 
         function log(s) {
             var logOutput = document.getElementById("logOutput");
             var el = $("#logOutput").after('<hr>' + s);
 
+        }
+
+        function increaseValue(evt, valueName) {
+            switch (valueName) {
+                case "ambient_temperature":
+                    var text = $("#ambient_temperature").val();
+                    var res = text.replace("°C", "");
+                    var ambientTemp = parseFloat(res);
+                    ambientTemp = ambientTemp + 0.5;
+                    myObj = {
+                        "type": "set_value", "value_name": "ambient_temperature", "value": ambientTemp
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+
+                   break;
+                case "sun_state":
+                    if (text == "Dark")
+                        text = "Cloudy";
+                    else if (text == "Cloudy")
+                        text = "Sunny";
+                    myObj = {
+                        "type": "set_value", "value_name": "sun_state", "value": text
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+                    break;
+
+                case "air_state":
+                    var text = $("#air_state").val();
+                    if (text == "Bad Air")
+                        text = "Used Air";
+                    else if (text == "Used Air")
+                        text = "Good Air";
+                    myObj = {
+                        "type": "set_value", "value_name": "air_state", "value": text
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+                    break;
+            }
+        }
+
+        function decreaseValue(evt, valueName) {
+            switch (valueName) {
+                case "ambient_temperature":
+                    var text = $("#ambient_temperature").val();
+                    var res = text.replace("°C", "");
+                    var ambientTemp = parseFloat(res);
+                    ambientTemp = ambientTemp - 0.5;
+                    myObj = {
+                        "type": "set_value", "value_name": "ambient_temperature", "value": ambientTemp
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+
+                    break;
+                case "sun_state":
+                    var text = $("#sun_state").val();
+                    if (text == "Sunny")
+                        text = "Cloudy";
+                    else if (text == "Cloudy")
+                        text = "Dark";
+                    myObj = {
+                        "type": "set_value", "value_name": "sun_state", "value": text
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+                    break;
+
+                case "air_state":
+                    var text = $("#air_state").val();
+                    if (text == "Good Air")
+                        text = "Used Air";
+                    else if (text == "Used Air")
+                        text = "Bad Air";
+                    myObj = {
+                        "type": "set_value", "value_name": "air_state", "value": text
+                    };
+                    var myJSON = JSON.stringify(myObj);
+                    ws.send(myJSON);
+                    break;
+
+            }
         }
 
          function openCity(evt, cityName) {
@@ -236,12 +320,12 @@
                         <table>
                             <tr>
                                 <td>
-                                    <button id="IncreaseAirState" style="height:20px;width:20px;">+</button>
+                                    <button id="IncreaseAirState" onclick="increaseValue(event,'air_state')" style="height:20px;width:20px;">+</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <button id="DecreaseAirState" style="height:20px;width:20px;">-</button>
+                                    <button id="DecreaseAirState" onclick="decreaseValue(event,'air_state')"  style="height:20px;width:20px;">-</button>
                                 </td>
                             </tr>
                         </table>
