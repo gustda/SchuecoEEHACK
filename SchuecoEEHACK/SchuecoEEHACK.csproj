@@ -48,6 +48,12 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.WebSockets, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WebSockets.0.2.3.1\lib\net45\Microsoft.WebSockets.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -67,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\SchuecoEEHACK - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -75,11 +82,33 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DemoClient.html" />
+    <Content Include="HotelRoom.html" />
+    <Content Include="Index.html" />
+    <Content Include="Ressources\css\HotelRoom.css" />
+    <Content Include="Ressources\css\Index.css" />
+    <Content Include="Ressources\Images\ctb_geoeffnet_on.png" />
+    <Content Include="Ressources\Images\Heizung.png" />
+    <Content Include="Ressources\Images\kippfenster_rwa_geöffnet_on.png" />
+    <Content Include="Ressources\Images\licht_on.png" />
+    <Content Include="Ressources\Images\presence.png" />
+    <Content Include="Ressources\Images\Room.png" />
+    <Content Include="Ressources\Images\Schueco.png" />
+    <Content Include="Ressources\Images\sonne_on.png" />
+    <Content Include="Ressources\Images\Temperatur.png" />
+    <Content Include="Ressources\Images\VOC.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HotelRoom.cs" />
+    <Compile Include="Json\AbstractJson.cs" />
+    <Compile Include="Json\ConnectionRequest.cs" />
+    <Compile Include="Json\SetValue.cs" />
+    <Compile Include="MicrosoftWebSockets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebSocketServer.ashx.cs" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        Schüco ENERGY EFFICIENCY HACK 2018
+    </title>
+    <script src="http://code.jquery.com/jquery-3.1.1.js" type="text/javascript" charset="utf-8"></script>
+    
+
+    <script type="text/javascript" charset="utf-8">
+
+        window.onload = function () {                 //  var url = "ws://localhost:8733/Design_Time_Addresses/WebSocketServer/WebSocketServer?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+            //var url = "ws://localhost:50911/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+            var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+             var ws = new WebSocket(url);
+
+            document.getElementById("defaultOpen").click();
+
+            
+            ws.onclose = function () {
+                log("WebSocket closed");
+            }
+            ws.onerror = function (e) {
+                log("error");
+            }
+
+            ws.onopen = function () {
+                document.getElementById("state").value = "open";
+            }
+            ws.onmessage = function (e) {
+
+                myObj = JSON.parse(e.data.toString())
+
+                switch (myObj.type) {
+                    case "property_update":
+                        switch (myObj.value_name) {
+                            case "ambient_temperature":
+                                document.getElementById("ambient_temperature").value = myObj.value + "°C";
+                                break;
+                            case "sun_state":
+                                document.getElementById("sun_state").value = myObj.value;
+                                break;
+                        }
+                        break;
+                }
+
+                logOutTemp(e.data.toString());
+            }
+
+            ws.onclose = function () {
+                document.getElementById("state").value = "closed";
+            }
+            ws.onerror = function (e) {
+                document.getElementById("state").value = e.toString();
+            }
+
+            document.getElementById("connectRoom").onclick = function () {
+                myObj = {
+                    "type": "connection_request", "request_type": "connect_to_room", "room_number": $("#roomNumber").val()
+                };
+                var myJSON = JSON.stringify(myObj);
+                ws.send(myJSON);
+            }
+
+            document.getElementById("IncreaseAmbientTemp").onclick = function () {
+                var text = $("#ambient_temperature").val();
+                var res = text.replace("°C", "");
+                var ambientTemp = parseFloat(res);
+                ambientTemp = ambientTemp + 0.5;
+                myObj = {
+                    "type": "set_value", "value_name": "ambient_temperature", "value": ambientTemp
+                };
+                var myJSON = JSON.stringify(myObj);
+                ws.send(myJSON);
+            }
+
+            document.getElementById("DecreaseAmbientTemp").onclick = function () {
+                var text = $("#ambient_temperature").val();
+                var res = text.replace("°C", "");
+                var ambientTemp = parseFloat(res);
+                ambientTemp = ambientTemp - 0.5;
+                myObj = {
+                    "type": "set_value", "value_name": "ambient_temperature", "value": ambientTemp
+                };
+                var myJSON = JSON.stringify(myObj);
+                ws.send(myJSON);
+            }
+
+            document.getElementById("IncreaseSunState").onclick = function () {
+                var text = $("#sun_state").val();
+                if (text == "Dark")
+                    text = "Cloudy";
+                else if (text == "Cloudy")
+                    text = "Sunny";
+                myObj = {
+                    "type": "set_value", "value_name": "sun_state", "value": text
+                };
+                var myJSON = JSON.stringify(myObj);
+                ws.send(myJSON);
+            }
+
+            document.getElementById("DecreaseSunState").onclick = function () {
+                var text = $("#sun_state").val();
+                if (text == "Sunny")
+                    text = "Cloudy";
+                else if (text == "Cloudy")
+                    text = "Dark";
+                myObj = {
+                    "type": "set_value", "value_name": "sun_state", "value": text
+                };
+                var myJSON = JSON.stringify(myObj);
+                ws.send(myJSON);
+            }
+
+            document.getElementById("DisconnectLogo").onclick = function () {
+                ws.send("disconnect Logo:" + $("#deviceIP").val());
+            }
+
+            document.getElementById("SendValue").onclick = function () {
+                ws.send("Send Value AM4:" + $("#ValueAM").val());
+            }
+        }
+
+        function logOutTemp(s) {
+            document.getElementById("outTemp").value = s;
+        }
+
+        function log(s) {
+            var logOutput = document.getElementById("logOutput");
+            var el = $("#logOutput").after('<hr>' + s);
+
+        }
+
+         function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function openRoom() {
+            $("#hotelroom").load("HotelRoom.html");
+        }
+    </script>
+
+
+
+</head>
+<body style="font-family:univers,sans-serif;">
+    <link rel="stylesheet" href="Ressources/css/Index.css" />
+
+
+    <img src="Ressources/Images/Schueco.png" /><br />
+    <table>
+        <tr>
+            <td style="color:#78b928;font-size:36px;">ENERGY EFFICIENCY HACK</td>
+            <td style="color:#a2b3bc;font-size:36px;"> 2018</td>
+        </tr>
+        <tr>
+            <td style="font-size:25px;font-family:univers,sans-serif;">Smart Buildings Elements</td>
+        </tr>
+    </table>
+    
+    <p/>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'docu')" id="defaultOpen">Documentation</button>
+        <button class="tablinks" onclick="openCity(event, 'hotelroom')">Hotel room</button>
+        <button class="tablinks" onclick="openCity(event, 'democlient')">Demo Client</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="docu" class="tabcontent">
+        <h3>London</h3>
+
+        <p></p>
+        <h2>Links to other views</h2>
+
+        <br /><a href="HotelRoom.html">Room View</a>
+        <br /><a href="DemoClient.html">Demo Client</a>
+
+
+
+        <h2>Server Example</h2>
+
+
+        <p>London is the capital city of England.</p>
+    </div>
+
+    <div id="hotelroom" class="tabcontent">
+        <link rel="stylesheet" href="Ressources/css/HotelRoom.css" />
+
+        <p />
+        <h2>Please connect to a Hotelroom or create a new one.</h2>
+        <table>
+            <tr>
+                <td>Enter Room Nr. </td>
+                <td><input type="text" id="roomNumber" value="112" /></td>
+                <td>
+                    <button id="connectRoom">Connect</button>
+                </td>
+                <td>
+                    <button id="connectNewRoom">New Room</button>
+                </td>
+                <td>
+                    <output type="text" id="state" value="15,3 °C" />
+                </td>
+            </tr>
+        </table>
+
+        <p />
+        <img src="/Ressources/Images/Room.png" width="1000" />
+
+
+        <div id="boxAirState">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/VOC.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:24px;height:inherit" type="text" id="air_state" value="" readonly /></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <button id="IncreaseAirState" style="height:20px;width:20px;">+</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="DecreaseAirState" style="height:20px;width:20px;">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxRoomTemperature">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/Temperatur.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:20px;height:inherit" type="text" id="room_state" value="" readonly /></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <button id="IncreaseRoomTemp" style="height:20px;width:20px;">+</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="DecreaseRoomTemp" style="height:20px;width:20px;">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxPresence">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/presence.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="presence_state" value="" readonly /></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <button id="IncreasePresence" style="height:20px;width:20px;">+</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="DecreasePresence" style="height:20px;width:20px;">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxLight">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/licht_on.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="light_state" value="" readonly /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxHeater">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/Heizung.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="heater_state" value="" readonly /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxWindow">
+            <table>
+                <tr>
+                    <td align="center"><img src="/Ressources/Images/kippfenster_rwa_geöffnet_on.png"/></td>
+                </tr>
+                <tr>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="window_state" value="" readonly /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxBlind">
+            <table>
+                <tr>
+                    <td align="center"><img src="/Ressources/Images/ctb_geoeffnet_on.png" /></td>
+                </tr>
+                <tr>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="blind_state" value="" readonly /></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxAmbientTemperature">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/Temperatur.png" /></td>
+                    <td><input class="textfield" type="text" id="ambient_temperature" value="" readonly /></td>
+                    <td>
+                        <table cellpadding="0">
+                            <tr>
+                                <td>
+                                    <button class="button" id="IncreaseAmbientTemp" >+</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button class="button" id="DecreaseAmbientTemp">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="boxSunState">
+            <table>
+                <tr>
+                    <td><img src="/Ressources/Images/sonne_on.png" /></td>
+                    <td><input style="width:100px;color:#78b928;font-size:32px;height:inherit" type="text" id="sun_state" value="" readonly /></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <button id="IncreaseSunState" style="height:20px;width:20px;">+</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="DecreaseSunState" style="height:20px;width:20px;">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+        <div id="democlient" class="tabcontent">
+            <h3>Tokyo</h3>
+            <p>Tokyo is the capital of Japan.</p>
+        </div>
+
+
+
+
+        </p>
+</body>
+</html>
