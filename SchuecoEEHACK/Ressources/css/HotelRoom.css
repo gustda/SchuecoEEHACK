@@ -72,8 +72,8 @@
     border: none;
     color: white;
     padding: 0px;
-    height: 16px;
-    width: 16px;
+    height: 22px;
+    width: 22px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -81,9 +81,62 @@
     cursor: pointer;
 }
 
+.windowbutton {
+    background-color: #78b928;
+    border: none;
+    color: white;
+    padding: 0px;
+    height: 18px;
+    width: 50px;
+    font-size:14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0px;
+    cursor: pointer;
+}
+
+.connectbutton {
+    background-color: #78b928;
+    border: none;
+    color: white;
+    padding: 0px;
+    height: 28px;
+    width: 125px;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0px;
+    cursor: pointer;
+}
+
+.clientbutton {
+    background-color: #78b928;
+    border: none;
+    color: white;
+    padding: 0px;
+    height: 28px;
+    width: 50px;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0px;
+    cursor: pointer;
+}
+
+
 .textfield {
-    width:100px;
-    color:#78b928;
-    font-size:26px;
-    height:inherit;
+    width: 100px;
+    color: #78b928;
+    font-size: 26px;
+    height: 40px;
+}
+
+.textfield_client {
+    width: 100px;
+    color: #78b928;
+    font-size: 18px;
+    height: 28px;
 }
