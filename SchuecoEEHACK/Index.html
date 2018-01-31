@@ -12,8 +12,8 @@
     <script type="text/javascript" charset="utf-8">
         var ws;
         window.onload = function () {                 //  var url = "ws://localhost:8733/Design_Time_Addresses/WebSocketServer/WebSocketServer?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
-            var url = "ws://localhost:50911/WebSocketServer.ashx?";
-            //var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+            //var url = "ws://localhost:50911/WebSocketServer.ashx?";
+            var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
              ws = new WebSocket(url);
 
             document.getElementById("defaultOpen").click();
