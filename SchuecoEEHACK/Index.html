@@ -8,21 +8,26 @@
     </title>
     <script src="http://code.jquery.com/jquery-3.1.1.js" type="text/javascript" charset="utf-8"></script>
     
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
     <script type="text/javascript" charset="utf-8">
         var ws;
-        window.onload = function () {                 //  var url = "ws://localhost:8733/Design_Time_Addresses/WebSocketServer/WebSocketServer?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
+        window.onload = function () {
+            hljs.style = "solarized-light";
+            hljs.language = "xml";
+            hljs.highlightBlock(code);
+            hljs.language = "cs";
+            hljs.highlightBlock(request);
+            hljs.highlightBlock(update);
+            hljs.highlightBlock(values);
+            hljs.highlightBlock(setValue);
+            
             //var url = "ws://localhost:50911/WebSocketServer.ashx?";
-            var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?ConnectionData=" + $("#deviceIP").val() + "?ClientName=" + $("#clientName").val();
-             ws = new WebSocket(url);
+            var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?";
+            ws = new WebSocket(url);
 
             document.getElementById("defaultOpen").click();
-
-            
-            ws.onclose = function () {
-                document.getElementById("state").value = "closed";
-                document.getElementById("state_client").value = "closed";
-            }
+                        
             ws.onerror = function (e) {
                 log("error");
             }
@@ -30,7 +35,17 @@
             ws.onopen = function () {
                 document.getElementById("state").value = "open";
                 document.getElementById("state_client").value = "open";
+            }            
+
+            ws.onclose = function () {
+                document.getElementById("state").value = "closed";
+                document.getElementById("state_client").value = "closed";
             }
+            ws.onerror = function (e) {
+                document.getElementById("state").value = e.toString();
+                document.getElementById("state_client").value = e.toString();
+            }
+
             ws.onmessage = function (e) {
 
                 myObj = JSON.parse(e.data.toString())
@@ -38,6 +53,10 @@
                 switch (myObj.type) {
                     case "property_update":
                         switch (myObj.value_name) {
+                            case "room_number":
+                                document.getElementById("roomNumber").value = myObj.value;
+                                document.getElementById("roomNumber_client").value = myObj.value;
+                                break;
                             case "ambient_temperature":
                                 document.getElementById("ambient_temperature").value = myObj.value + "°C";
                                 document.getElementById("ambient_temperature_client").value = myObj.value + "°C";
@@ -77,24 +96,7 @@
                         }
                         break;
                 }
-                
-            }
-
-            ws.onclose = function () {
-                document.getElementById("state").value = "closed";
-                document.getElementById("state_client").value = "closed";
-            }
-            ws.onerror = function (e) {
-                document.getElementById("state").value = e.toString();
-                document.getElementById("state_client").value = e.toString();
-            }
-
-            
-
-
-            document.getElementById("SendValue").onclick = function () {
-                ws.send("Send Value AM4:" + $("#ValueAM").val());
-            }
+            }            
         }
 
         function connectRoom(number) {
@@ -107,11 +109,6 @@
             ws.send(myJSON);
         }
 
-        function log(s) {
-            var logOutput = document.getElementById("logOutput");
-            var el = $("#logOutput").after('<hr>' + s);
-
-        }
 
         function increaseValue(evt, valueName) {
             switch (valueName) {
@@ -245,7 +242,7 @@
             }
         }
 
-        function sendValue(evt, valueName, value) {            
+        function sendValue(evt, valueName, value) {
             myObj = {
                 "type": "set_value", "value_name": valueName, "value": value
             };
@@ -253,7 +250,7 @@
             ws.send(myJSON);
         }
 
-         function openTab(evt, tabName) {
+        function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
 
             // Get all elements with class="tabcontent" and hide them
@@ -272,17 +269,17 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
-       
+
     </script>
 
 
 
 </head>
 <body style="font-family:univers,sans-serif;">
-    <link rel="stylesheet" href="Ressources/css/Index.css" />
+    <link rel="stylesheet" href="Ressources/css/Index.css"/>
 
 
-    <img src="Ressources/Images/Schueco.png" /><br />
+    <img src="Ressources/Images/Schueco.png" /><br/>
     <table>
         <tr>
             <td style="color:#78b928;font-size:36px;">ENERGY EFFICIENCY HACK</td>
@@ -292,7 +289,7 @@
             <td style="font-size:25px;font-family:univers,sans-serif;">Smart Buildings Elements</td>
         </tr>
     </table>
-    
+
     <p/>
 
     <div class="tab">
@@ -302,276 +299,542 @@
     </div>
 
     <!-- Tab content -->
-    <div id="docu" class="tabcontent">
-        <h3>London</h3>
-
-        <p></p>
-        <h2>Links to other views</h2>
-
-        <br /><a href="HotelRoom.html">Room View</a>
-        <br /><a href="DemoClient.html">Demo Client</a>
-
-
-
-        <h2>Server Example</h2>
-
-
-        <p>London is the capital city of England.</p>
-    </div>
-
-    <div id="hotelroom" class="tabcontent">
-        <link rel="stylesheet" href="Ressources/css/HotelRoom.css" />
+    <div id="docu" class="tabcontent" style="max-width:800px">
+        <h2>Documenation</h2>
         <p />
-        <h3>Please connect to a Hotelroom or create a new one.</h3>
-        <table>
-            <tr>
-                <td>Enter Room Nr. </td>
-                <td><input class="textfield_client" type="text" id="roomNumber" value="0" /></td>
-                <td>
-                    <button class="connectbutton" onclick="connectRoom($('#roomNumber').val())">Connect</button>
-                </td>
-                <td>
-                    <button class="connectbutton" onclick="connectRoom(0)">New Room</button>
-                </td>
-                <td>
-                    <output type="text" id="state" value="" />
-                </td>
-            </tr>
-        </table>
+        <h3>Challenge: Smart Building Elements Can Talk To You</h3>
+
+        <b>Problem statement/description:</b> Highly efficient windows, combined with smart building automation offer a great opportunity for massive energy savings. However, there is a twofold challenge implied: On the one hand market penetration of smart windows needs to be scaled up to reach a critical mass. On the other hand intelligent building automation elements need to become more user friendly: people are regularly overwhelmed because of an unfamiliar system handling (e.g. hotel guests) and also often have no incentive for energy efficient behaviour.
         <p />
-        <img src="/Ressources/Images/Room.png" width="1000" />
-        <div id="boxAirState">
+        <b>API Documentation</b>
+        <p />
+        This APi has been developed to give you an easy way to complete this challenge. It contains simple solutions based on websockets and JSON. With this API you can connect to a server and change all parameters there. You will be informed about any changes that take note of the parameters. Changes will be pushed by the server. This makes it possible for applications to manipulate anything about the example hotel rooms shown. To get an idea of a total solution for a client you can watch the demo client. An independently executable solution can simply be copied there.
+        <p />
+        <b>Set up a connection</b>
+        <p />
+        To connect to the server, a websocket connection must be established. The websocket should be addressed with the following URL: ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?
+        <p />
+        A simple and no secure websocket connection is expected
+        <p />
+        <b>Connect with a hotel room</b>
+        <p />
+In order to be able to change values on the server, a connection to a hotel room has to be established. You can connect to a new hotel room by simply sending a "0". If you want to log in to a specific room, give its room number with the request. Attention: you can also log into a room of another group. The rooms are not secured. In case of doubt, please choose a new room.
+        <div id="request">
+            <pre>
+                <code class="cs">
+{
+    "type" : "connection_request",
+    "request_type" : "connect_to_room",
+    "room_number" : number
+}                </code>
+            </pre>
+        </div>
+        <p/>
+The server recommends the connection attempt by sending the allocated room number
+        </p>
+<b>Receive data</b>
+        <p />
+The server can send data to the clients. For this purpose, a JSON with the same construction is always used. The JSON is structured like this:
+        <div id="update">
+            <pre>
+            <code class="cs">
+{
+    "type" : "property_update",
+    "value_name" : "room_temperature",
+    "value" : 100
+}                </code>
+            </pre>
+        </div>
+        <p/>
+You can see that this is a very similar construction to the connection request. The JSON type "property_update" is used to send properties from the server to the clients. Any changes made to a value on the server will be sent to all connected clients. Of course, there are only notifications about the properties of the selected room.
+For the different value names there are different data types and value ranges for value. Below is a listing of the different values that can be received on this way and the possible values, if required.
+
+        <div id="values">
+            <pre>
+            <code class="cs">
+value_name = ”room_number”
+value = 100 // integer
+<br />
+value_name = ”ambient_temperature“
+value = 15.5 // decimal as °C
+<br />
+value_name = "room_temperature"
+value = 15.5 // decimal as °C
+<br />
+value_name = ”presence_state“
+value = “Unused“ // string if you use the hotel room possible values are 
+                 // “Unused“
+                 //“used”
+<br />
+value_name = ”sun_state“
+value = “Dark“ // string if you use the hotel room possible values are
+               // “Dark”
+               // “Cloudy”
+               // “Sunny”
+<br />
+value_name =”air_state“
+value = “Bad Air“ // string if you use the hotel room possible values are 
+                  // “Bad Air”
+                  // “Used Air” 
+                  // “Good Air”
+<br />
+value_name = ”light_state“
+value = “On“ // string if you use the hotel room possible values are 
+             // “On”
+             // “Off”
+<br />
+value_name = ”heater_state”
+value = “On“ // string if you use the hotel room possible values are 
+             // “On” 
+             // “Off”
+<br />
+value_name = ” window_state”
+value = “Closed“ // string if you use the hotel room possible values are
+                 // “Closed”
+                 // “Turned”
+                 // “Tilt”
+<br />
+value_name = ”blind_state”
+value = “Open“ // string if you use the hotel room possible values are 
+               // “Open” 
+               // “Closed”                </code>
+            </pre>
+        </div>
+        <p/>
+        <b>Write data</b>
+        <p />
+Writing data works the same way as receiving. However, there is another JSON type for it.
+        <div id="setValue">
+            <pre>
+                <code class="cs">
+{
+    "type" : "set_value",
+    "value_name" : "room_temperature",
+    "value" : 100
+}                </code>
+            </pre>
+        </div>
+        <p/>
+However, the data that can be written is identical to those that have been described in terms of receiving data. All values that can be received this way can also be changed on the server. So if you want a temperature history, just program it and send the values to the server according to your idea.
+        </div>
+
+        <div id="hotelroom" class="tabcontent">
+            <link rel="stylesheet" href="Ressources/css/HotelRoom.css" />
+            <h2>Hotel room simulation</h2>
+            <p />
+            <h3>Please connect to a Hotel room or create a new one.</h3>
             <table>
                 <tr>
-                    <td><img src="/Ressources/Images/VOC.png" /></td>
-                    <td><input class="textfield" id="air_state" value="" readonly /></td>
+                    <td>Enter room Nr. </td>
+                    <td><input class="textfield_client" type="text" id="roomNumber" value="0" /></td>
                     <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="increaseValue(event,'air_state')">+</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="decreaseValue(event,'air_state')"  >-</button>
-                                </td>
-                            </tr>
-                        </table>
+                        <button class="connectbutton" onclick="connectRoom($('#roomNumber').val())">Connect</button>
+                    </td>
+                    <td>
+                        <button class="connectbutton" onclick="connectRoom(0)">New Room</button>
+                    </td>
+                    <td>
+                        <output type="text" id="state" value="" />
                     </td>
                 </tr>
             </table>
-        </div>
-
-        <div id="boxRoomTemperature">
-            <table>
-                <tr>
-                    <td><img src="/Ressources/Images/Temperatur.png" /></td>
-                    <td><input class="textfield" id="room_temperature" value="" readonly /></td>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="increaseValue(event,'room_temperature')"  >+</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="decreaseValue(event,'room_temperature')">-</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="boxPresence">
-            <table>
-                <tr>
-                    <td><img src="/Ressources/Images/presence.png" /></td>
-                    <td><input class="textfield" id="presence_state" value="" readonly /></td>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="increaseValue(event,'presence_state')">+</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="decreaseValue(event,'presence_state')">-</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="boxLight">
-            <table>
-                <tr>
-                    <td><img src="/Ressources/Images/licht_on.png" /></td>
-                    <td><input class="textfield" id="light_state" value="" readonly /></td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="boxHeater">
-            <table>
-                <tr>
-                    <td><img src="/Ressources/Images/Heizung.png" /></td>
-                    <td><input class="textfield" id="heater_state" value="" readonly /></td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="boxWindow">
-            <table>
-                <tr>
-                    <td align="center"><img src="/Ressources/Images/kippfenster_rwa_geöffnet_on.png" /></td>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <button class="windowbutton" onclick="sendValue(event,'window_state','Closed')">Close</button>
-                                </td>
-                            </tr>
-                            <tr><td><button class="windowbutton" onclick="sendValue(event,'window_state','Turned')">Turn</button></td></tr>
-                            <tr><td><button class="windowbutton" onclick="sendValue(event,'window_state','Tilt')">Tilt</button></td></tr>
-                        </table>
-                    </td>
+            <p />
+            <img src="/Ressources/Images/Room.png" width="1000" />
+            <div id="boxAirState">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/VOC.png" /></td>
+                        <td><input class="textfield" id="air_state" value="" readonly /></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="increaseValue(event,'air_state')">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="decreaseValue(event,'air_state')">-</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
                     </tr>
-                <tr>
-                    <td colspan="2"><input class="textfield" id="window_state" style="width:110px;" value="" readonly /></td>
-                </tr>
-            </table>
+                </table>
+            </div>
+
+            <div id="boxRoomTemperature">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/Temperatur.png" /></td>
+                        <td><input class="textfield" id="room_temperature" value="" readonly /></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="increaseValue(event,'room_temperature')">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="decreaseValue(event,'room_temperature')">-</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxPresence">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/presence.png" /></td>
+                        <td><input class="textfield" id="presence_state" value="" readonly /></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="increaseValue(event,'presence_state')">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="decreaseValue(event,'presence_state')">-</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxLight">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/licht_on.png" /></td>
+                        <td><input class="textfield" id="light_state" value="" readonly /></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxHeater">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/Heizung.png" /></td>
+                        <td><input class="textfield" id="heater_state" value="" readonly /></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxWindow">
+                <table>
+                    <tr>
+                        <td align="center"><img src="/Ressources/Images/kippfenster_rwa_geöffnet_on.png" /></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <button class="windowbutton" onclick="sendValue(event,'window_state','Closed')">Close</button>
+                                    </td>
+                                </tr>
+                                <tr><td><button class="windowbutton" onclick="sendValue(event,'window_state','Turned')">Turn</button></td></tr>
+                                <tr><td><button class="windowbutton" onclick="sendValue(event,'window_state','Tilt')">Tilt</button></td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input class="textfield" id="window_state" style="width:110px;" value="" readonly /></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxBlind">
+                <table>
+                    <tr>
+                        <td align="center"><img src="/Ressources/Images/ctb_geoeffnet_on.png" /></td>
+                    </tr>
+                    <tr>
+                        <td><input class="textfield" id="blind_state" value="" readonly /></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxAmbientTemperature">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/Temperatur.png" /></td>
+                        <td><input class="textfield" id="ambient_temperature" value="" readonly /></td>
+                        <td>
+                            <table cellpadding="0">
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="increaseValue(event,'ambient_temperature')">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="decreaseValue(event,'ambient_temperature')">-</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="boxSunState">
+                <table>
+                    <tr>
+                        <td><img src="/Ressources/Images/sonne_on.png" /></td>
+                        <td><input class="textfield" id="sun_state" value="" readonly /></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="increaseValue(event,'sun_state')">+</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button class="button" onclick="decreaseValue(event,'sun_state')">-</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
-        <div id="boxBlind">
+        <div id="democlient" class="tabcontent" style="max-width:800px">
+            <h2>Demo client</h2>
+            <p />
+            <h3>Shows a demo client, to demonstrate the clientside implementation.</h3>
             <table>
                 <tr>
-                    <td align="center"><img src="/Ressources/Images/ctb_geoeffnet_on.png" /></td>
+                    <td>Connection State</td>
+                    <td><output type="text" id="state_client" value="" /></td>
                 </tr>
                 <tr>
-                    <td><input class="textfield" id="blind_state" value="" readonly /></td>
+                    <td>Enter Room Nr. </td>
+                    <td><input class="textfield_client" type="text" id="roomNumber_client" value="0" /></td>
+                    <td colspan="3"><button class="connectbutton" onclick="connectRoom($('#roomNumber_client').val())" id="connectRoom">Connect</button></td>
                 </tr>
-            </table>
-        </div>
-
-        <div id="boxAmbientTemperature">
-            <table>
                 <tr>
-                    <td><img src="/Ressources/Images/Temperatur.png" /></td>
-                    <td><input class="textfield" id="ambient_temperature" value="" readonly /></td>
-                    <td>
-                        <table cellpadding="0">
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="increaseValue(event,'ambient_temperature')" >+</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="decreaseValue(event,'ambient_temperature')">-</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
+                    <td>Air Quality</td>
+                    <td><output class="textfield_client" id="air_state_client" /></td>
                 </tr>
-            </table>
-        </div>
-
-        <div id="boxSunState">
-            <table>
                 <tr>
-                    <td><img src="/Ressources/Images/sonne_on.png" /></td>
-                    <td><input class="textfield" id="sun_state" value="" readonly /></td>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="increaseValue(event,'sun_state')">+</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button class="button" onclick="decreaseValue(event,'sun_state')">-</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
+                    <td>Room temperature</td>
+                    <td><output class="textfield_client" id="room_temperature_client" /></td>
+                </tr>
+                <tr>
+                    <td>Presence detection</td>
+                    <td><output class="textfield_client" id="presence_state_client" /></td>
+                </tr>
+
+                <tr>
+                    <td>Ambient temperature</td>
+                    <td><output class="textfield_client" id="ambient_temperature_client" /></td>
+                </tr>
+                <tr>
+                    <td>Global radiation</td>
+                    <td><output class="textfield_client" id="sun_state_client" /></td>
+                </tr>
+
+                <tr>
+                    <td>Lights</td>
+                    <td><output class="textfield_client" id="light_state_client" /></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'light_state','On')" id="connectRoom">On</button></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'light_state','Off')" id="connectRoom">Off</button></td>
+                </tr>
+
+                <tr>
+                    <td>Heater</td>
+                    <td><output class="textfield_client" id="heater_state_client" /></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'heater_state','On')" id="connectRoom">On</button></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'heater_state','Off')" id="connectRoom">Off</button></td>
+                </tr>
+                <tr>
+                    <td>Window</td>
+                    <td><output class="textfield_client" id="window_state_client" /></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'window_state','Closed')" id="connectRoom">Close</button></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'window_state','Turned')" id="connectRoom">Turn</button></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'window_state','Tilt')" id="connectRoom">Tilt</button></td>
+                </tr>
+                <tr>
+                    <td>Blinds</td>
+                    <td><output class="textfield_client" id="blind_state_client" /></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'blind_state','Open')" id="connectRoom">Open</button></td>
+                    <td><button class="clientbutton" onclick="sendValue(event,'blind_state','Closed')" id="connectRoom">Close</button></td>
                 </tr>
             </table>
+
+            <p />
+            <p />
+            <h3>Code for this Democlient</h3>
+            <p />
+            If you want to implement your own client, you are might uses this demo implementation, to get an idea how it could be done. This is an html/javascript implementation.
+            <p />
+            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" />
+            <div id="code">
+                <pre>
+                    <code class="xml">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+        &lt;title&gt;
+            Schüco ENERGY EFFICIENCY HACK 2018
+        &lt;/title&gt;
+        &lt;script src="http://code.jquery.com/jquery-3.1.1.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" charset="utf-8"&gt;
+        var ws;
+        window.onload = function () {
+        var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?";
+        ws = new WebSocket(url);
+        ws.onmessage = function (e) {
+            myObj = JSON.parse(e.data.toString())
+            switch (myObj.type) {
+                case "property_update":
+                    switch (myObj.value_name) {
+                        case "room_number":
+                            document.getElementById("roomNumber_client").value = myObj.value;
+                            break;
+                        case "ambient_temperature":
+                            document.getElementById("ambient_temperature_client").value = myObj.value + "°C";
+                            break;
+                        case "room_temperature":
+                            document.getElementById("room_temperature_client").value = myObj.value + "°C";
+                            break;
+                        case "presence_state":
+                            document.getElementById("presence_state_client").value = myObj.value;
+                            break;
+                        case "sun_state":
+                            document.getElementById("sun_state_client").value = myObj.value;
+                            break;
+                        case "air_state":
+                            document.getElementById("air_state_client").value = myObj.value;
+                            break;
+                        case "light_state":
+                            document.getElementById("light_state_client").value = myObj.value;
+                            break;
+                        case "heater_state":
+                            document.getElementById("heater_state_client").value = myObj.value;
+                            break;
+                        case "window_state":
+                            document.getElementById("window_state_client").value = myObj.value;
+                            break;
+                        case "blind_state":
+                            document.getElementById("blind_state_client").value = myObj.value;
+                            break;
+                    }
+                    break;
+                }
+            }
+            ws.onopen = function () {
+                document.getElementById("state_client").value = "open";
+            }
+            ws.onclose = function () {
+                document.getElementById("state_client").value = "closed";
+            }
+            ws.onerror = function (e) {
+                document.getElementById("state_client").value = e.toString();
+            }
+        }
+        function connectRoom(number) {
+            if (number == "")
+                number = 0;
+            myObj = {
+                "type": "connection_request", "request_type": "connect_to_room", "room_number": number
+            };
+            var myJSON = JSON.stringify(myObj);
+            ws.send(myJSON);
+        }
+        function sendValue(evt, valueName, value) {
+            myObj = {
+                "type": "set_value", "value_name": valueName, "value": value
+            };
+            var myJSON = JSON.stringify(myObj);
+            ws.send(myJSON);
+        }
+        &lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body style="font-family:univers,sans-serif;"&gt;
+        &lt;link rel="stylesheet" href="Ressources/css/Index.css" /&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;td style="color:#78b928;font-size:36px;"&gt;ENERGY EFFICIENCY HACK&lt;/td&gt;
+                &lt;td style="color:#a2b3bc;font-size:36px;"&gt; 2018&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td style="font-size:25px;font-family:univers,sans-serif;"&gt;Smart Buildings Elements&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+        &lt;p/&gt;
+        &lt;h3&gt;Demo client&lt;/h3&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Connection State&lt;/td&gt;
+                &lt;td&gt;&lt;output type="text" id="state_client" value="" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Enter Room Nr. &lt;/td&gt;
+                &lt;td&gt;&lt;input class="textfield_client" type="text" id="roomNumber_client" value="0" /&gt;&lt;/td&gt;
+                &lt;td colspan="3"&gt;&lt;button class="connectbutton" onclick="connectRoom($('#roomNumber_client').val())" id="connectRoom"&gt;Connect&lt;/button&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Air Quality&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="air_state_client" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Room temperature&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="room_temperature_client" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Presence detection&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="presence_state_client" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Ambient temperature&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="ambient_temperature_client" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Global radiation&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="sun_state_client" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Lights&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="light_state_client" /&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'light_state','On')" id="connectRoom"&gt;On&lt;/button&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'light_state','Off')" id="connectRoom"&gt;Off&lt;/button&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Heater&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="heater_state_client" /&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'heater_state','On')" id="connectRoom"&gt;On&lt;/button&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'heater_state','Off')" id="connectRoom"&gt;Off&lt;/button&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Window&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="window_state_client" /&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'window_state','Closed')" id="connectRoom"&gt;Close&lt;/button&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'window_state','Turned')" id="connectRoom"&gt;Turn&lt;/button&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'window_state','Tilt')" id="connectRoom"&gt;Tilt&lt;/button&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Blinds&lt;/td&gt;
+                &lt;td&gt;&lt;output class="textfield_client" id="blind_state_client" /&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'blind_state','Open')" id="connectRoom"&gt;Open&lt;/button&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;button class="clientbutton" onclick="sendValue(event,'blind_state','Closed')" id="connectRoom"&gt;Close&lt;/button&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code>
+                </pre>
+            </div>
         </div>
-    </div>
-
-    <div id="democlient" class="tabcontent">
-        <h3>Demo client</h3>
-
-        <table>
-            <tr>
-                <td>Connection State</td>
-                <td><output type="text" id="state_client" value="" /></td>
-            </tr>
-            <tr>
-                <td>Enter Room Nr. </td>
-                <td><input class="textfield_client" type="text" id="roomNumber_client" value="0" /></td>
-                <td colspan="3"><button class="connectbutton" onclick="connectRoom($('#roomNumber_client').val())" id="connectRoom">Connect</button></td>
-            </tr>
-            <tr>
-                <td>Air Quality</td>
-                <td><output class="textfield_client" id="air_state_client" /></td>
-            </tr>
-            <tr>
-                <td>Room temperature</td>
-                <td><output class="textfield_client" id="room_temperature_client" /></td>
-            </tr>
-            <tr>
-                <td>Presence detection</td>
-                <td><output class="textfield_client" id="presence_state_client" /></td>
-            </tr>
-
-            <tr>
-                <td>Ambient temperature</td>
-                <td><output class="textfield_client" id="ambient_temperature_client"/></td>
-            </tr>
-            <tr>
-                <td>Global radiation</td>
-                <td><output class="textfield_client" id="sun_state_client"/></td>
-            </tr>
-
-            <tr>
-                <td>Lights</td>
-                <td><output class="textfield_client" id="light_state_client" /></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'light_state','On')" id="connectRoom">On</button></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'light_state','Off')" id="connectRoom">Off</button></td>
-            </tr>
-
-            <tr>
-                <td>Heater</td>
-                <td><output class="textfield_client" id="heater_state_client" /></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'heater_state','On')" id="connectRoom">On</button></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'heater_state','Off')" id="connectRoom">Off</button></td>
-            </tr>
-            <tr>
-                <td>Window</td>
-                <td><output class="textfield_client" id="window_state_client" /></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'window_state','Closed')" id="connectRoom">Close</button></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'window_state','Turned')" id="connectRoom">Turn</button></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'window_state','Tilt')" id="connectRoom">Tilt</button></td>
-            </tr>
-            <tr>
-                <td>Blinds</td>
-                <td><output class="textfield_client" id="blind_state_client" /></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'blind_state','Open')" id="connectRoom">Open</button></td>
-                <td><button class="clientbutton" onclick="sendValue(event,'blind_state','Closed')" id="connectRoom">Close</button></td>
-            </tr>            
-        </table>
-    </div>
-
-
-
-</body>
+    </body>
 </html>

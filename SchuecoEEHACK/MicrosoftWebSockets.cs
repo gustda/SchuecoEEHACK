@@ -50,7 +50,31 @@ namespace SchuecoEEHACK
                     case "connection_request":
                         var connection_request = JsonConvert.DeserializeObject<Json.ConnectionRequest>(message);
                         RoomNumber = connection_request.room_number;
-                   
+
+                        // a new room is requested
+                        if (RoomNumber == 0)
+                        {
+                            // we need to find a free room
+                            for (int i = 100; i < 1000; i++)
+                            {
+                                bool used = false;
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == i)
+                                    {
+                                        used = true;
+                                        break;
+                                    }
+                                }
+                                // set the unused room number
+                                if (!used)
+                                {
+                                    RoomNumber = i;
+                                    break;
+                                }
+                            }
+                        }
+
                         bool found = false;
                         foreach(var room in Rooms)
                         {
@@ -61,6 +85,8 @@ namespace SchuecoEEHACK
                         }
                         if (!found)
                             Rooms.Add(new HotelRoom(RoomNumber));
+
+                        
 
                         SendAllValues();
                         break;
@@ -186,32 +212,6 @@ namespace SchuecoEEHACK
             
             if(message.Contains(':'))
                 messageTyp = message.Substring(0, message.IndexOf(':'));
-
-            
-
-            switch (messageTyp)
-            {
-                case "connection established":                    
-                    break;
-
-                case "connect Logo":
-                    // es wird ein neues Logo Device erzeugt und hier eine Referenz darauf gespeichert um auf Events reagieren zu können
-                    
-                    break;
-
-                case "disconnect Logo":                    
-                    
-                    break;
-
-                case "Send Value AM4":
-                    var value = message.Substring(message.IndexOf(':')+1);
-                    var number = Convert.ToInt16(value);
-                    break;
-
-            }
-
-
-            
         }
 
         private HotelRoom GetRoom()
@@ -304,6 +304,8 @@ namespace SchuecoEEHACK
             var room = GetRoom();
             if (null != room)
             {
+                var roomnumberupdate = new Json.SetValue() { type = "property_update", value_name = "room_number", value = RoomNumber };
+                Send(JsonConvert.SerializeObject(roomnumberupdate));
                 var ambientTemp = new Json.SetValue() { type= "property_update", value_name = "ambient_temperature", value = room.AmbientTemperature };
                 Send(JsonConvert.SerializeObject(ambientTemp));
                 var roomTemp = new Json.SetValue() { type = "property_update", value_name = "room_temperature", value = room.RoomTemperature };
