@@ -12,6 +12,7 @@ namespace SchuecoEEHACK
         private static WebSocketCollection clients = new WebSocketCollection();
         private static List<HotelRoom> Rooms;
         public int RoomNumber { get; set; }
+        public bool IsServerLog { get; set; }
 
         public MicrosoftWebSockets()
         {
@@ -31,6 +32,14 @@ namespace SchuecoEEHACK
             //  SetTimer();
         }
 
+        public override void OnClose()
+        {
+            base.OnClose();
+            clients.Remove(this);
+            UpdateRoom(RoomNumber);
+
+        }
+
         private void Device_NewDataReceived(object sender, EventArgs e)
         {
 
@@ -47,48 +56,59 @@ namespace SchuecoEEHACK
 
                 switch (json.type)
                 {
+                    case "room_request":
+                        SendAllRooms();
+                        break;
+
                     case "connection_request":
                         var connection_request = JsonConvert.DeserializeObject<Json.ConnectionRequest>(message);
                         RoomNumber = connection_request.room_number;
 
-                        // a new room is requested
-                        if (RoomNumber == 0)
+                        if (connection_request.request_type == "connect_to_room")
                         {
-                            // we need to find a free room
-                            for (int i = 100; i < 1000; i++)
+                            // a new room is requested
+                            if (RoomNumber == 0)
                             {
-                                bool used = false;
-                                foreach (var room in Rooms)
+                                // we need to find a free room
+                                for (int i = 100; i < 1000; i++)
                                 {
-                                    if (room.Number == i)
+                                    bool used = false;
+                                    foreach (var room in Rooms)
                                     {
-                                        used = true;
+                                        if (room.Number == i)
+                                        {
+                                            used = true;
+                                            break;
+                                        }
+                                    }
+                                    // set the unused room number
+                                    if (!used)
+                                    {
+                                        RoomNumber = i;
                                         break;
                                     }
                                 }
-                                // set the unused room number
-                                if (!used)
+                            }
+
+                            bool found = false;
+                            foreach (var room in Rooms)
+                            {
+                                if (room.Number == RoomNumber)
                                 {
-                                    RoomNumber = i;
-                                    break;
+                                    found = true;
                                 }
                             }
-                        }
-
-                        bool found = false;
-                        foreach(var room in Rooms)
+                            if (!found)
+                                Rooms.Add(new HotelRoom(RoomNumber));
+                            UpdateRoom(RoomNumber);
+                            SendAllValues();
+                        }else
                         {
-                            if(room.Number== RoomNumber)
+                            if(connection_request.request_type=="server_log")
                             {
-                                found = true;
+                                this.IsServerLog = true;
                             }
                         }
-                        if (!found)
-                            Rooms.Add(new HotelRoom(RoomNumber));
-
-                        
-
-                        SendAllValues();
                         break;
 
                     case "set_value":
@@ -226,6 +246,51 @@ namespace SchuecoEEHACK
             return null;
         }
         
+        private void SendAllRooms()
+        {
+            foreach(var room in Rooms)
+            {
+                int clientCounter = 0;
+                foreach(MicrosoftWebSockets client in clients)
+                {                    
+                    if(client.RoomNumber==room.Number)
+                    {
+                        clientCounter++;
+                    }
+                }
+                var update = new Json.RoomUpdate() { type = "room_update", connected_clients = clientCounter, room_number = room.Number, is_active = clientCounter > 0 };
+                Send(JsonConvert.SerializeObject(update));
+            }
+        }
+
+        private void UpdateRoom(int number)
+        {
+            foreach (var room in Rooms)
+            {
+                if (room.Number == number)
+                {
+                    int clientCounter = 0;
+                    foreach (MicrosoftWebSockets client in clients)
+                    {
+                        if (client.RoomNumber == room.Number)
+                        {
+                            clientCounter++;
+                        }
+                    }
+                    var update = new Json.RoomUpdate() { type = "room_update", connected_clients = clientCounter, room_number = room.Number, is_active = clientCounter > 0 };
+
+                    foreach (MicrosoftWebSockets client in clients)
+                    {
+                        if(client.IsServerLog)
+                        {
+                            client.Send(JsonConvert.SerializeObject(update));
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
         private void SendValue(string valueName)
         {
             string json;

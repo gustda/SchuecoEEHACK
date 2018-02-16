@@ -302,13 +302,15 @@
     <div id="docu" class="tabcontent" style="max-width:800px">
         <h2>Documenation</h2>
         <p />
-        <h3>Challenge: Smart Building Elements Can Talk To You</h3>
+        <h3>Challenge: Smart Building Elements can talk to you</h3>
 
-        <b>Problem statement/description:</b> Highly efficient windows, combined with smart building automation offer a great opportunity for massive energy savings. However, there is a twofold challenge implied: On the one hand market penetration of smart windows needs to be scaled up to reach a critical mass. On the other hand intelligent building automation elements need to become more user friendly: people are regularly overwhelmed because of an unfamiliar system handling (e.g. hotel guests) and also often have no incentive for energy efficient behaviour.
+        <b>Statement of the Challenge:</b>
+        <p />
+        Highly efficient windows, combined with smart building automation, offer a great opportunity for huge energy savings. However, there is a twofold challenge implied: On the one hand market penetration of smart windows needs to be scaled up to reach a critical mass. On the other hand intelligent building automation elements need to become more user friendly: people are regularly overwhelmed because of an unfamiliar system handling (e.g. hotel guests) and also often have no incentive for energy efficient behaviour.
         <p />
         <b>API Documentation</b>
         <p />
-        This APi has been developed to give you an easy way to complete this challenge. It contains simple solutions based on websockets and JSON. With this API you can connect to a server and change all parameters there. You will be informed about any changes that take note of the parameters. Changes will be pushed by the server. This makes it possible for applications to manipulate anything about the example hotel rooms shown. To get an idea of a total solution for a client you can watch the demo client. An independently executable solution can simply be copied there.
+        This API has been developed to give you an easy way to complete this challenge. It contains simple solutions based on websockets and JSON. You can connect to a server and change all parameters there and it informs you about any changes that take note of the parameters. Changes will be pushed by the server. This makes it possible for applications to manipulate anyProperty of the shown example hotel room. A complete Solution for a client implementation is shown on the demo client tab. An independently executable solution can simply be copied there.
         <p />
         <b>Set up a connection</b>
         <p />
@@ -318,10 +320,10 @@
         <p />
         <b>Connect with a hotel room</b>
         <p />
-In order to be able to change values on the server, a connection to a hotel room has to be established. You can connect to a new hotel room by simply sending a "0". If you want to log in to a specific room, give its room number with the request. Attention: you can also log into a room of another group. The rooms are not secured. In case of doubt, please choose a new room.
+        To change values on the server, a connection to a hotel room has to be established. You can connect to a new hotel room by simply sending a "0". If you want to log in to a specific room, give its room number with the request. Attention: you can also log into a room of another group. The rooms are not secured. In case of doubt, please choose a new room.
         <div id="request">
             <pre>
-                <code class="cs">
+            <code class="cs">
 {
     "type" : "connection_request",
     "request_type" : "connect_to_room",
@@ -329,12 +331,12 @@ In order to be able to change values on the server, a connection to a hotel room
 }                </code>
             </pre>
         </div>
-        <p/>
-The server recommends the connection attempt by sending the allocated room number
-        </p>
-<b>Receive data</b>
         <p />
-The server can send data to the clients. For this purpose, a JSON with the same construction is always used. The JSON is structured like this:
+        The server recommends the connection attempt by sending the allocated room number
+        </p>
+        <b>Receive data</b>
+        <p />
+        The server can send data to the clients. For this purpose, it sends a JSON structured like this:
         <div id="update">
             <pre>
             <code class="cs">
@@ -345,9 +347,9 @@ The server can send data to the clients. For this purpose, a JSON with the same 
 }                </code>
             </pre>
         </div>
-        <p/>
-You can see that this is a very similar construction to the connection request. The JSON type "property_update" is used to send properties from the server to the clients. Any changes made to a value on the server will be sent to all connected clients. Of course, there are only notifications about the properties of the selected room.
-For the different value names there are different data types and value ranges for value. Below is a listing of the different values that can be received on this way and the possible values, if required.
+        <p />
+You can see that this is a very similar structure to the connection request. The JSON type "property_update" is used to push properties from the server to the clients. Each change which is made to a value on the server will be sent to all connected clients. Of course, there are only notifications about the properties of the selected room.
+There are different data types for each value name, to specify value ranges for the value. There is a listing below, describing the different values that can be received. Value ranges are described, if required.
 
         <div id="values">
             <pre>
@@ -355,58 +357,67 @@ For the different value names there are different data types and value ranges fo
 value_name = ”room_number”
 value = 100 // integer
 <br />
+
 value_name = ”ambient_temperature“
 value = 15.5 // decimal as °C
 <br />
+
 value_name = "room_temperature"
 value = 15.5 // decimal as °C
 <br />
+
 value_name = ”presence_state“
 value = “Unused“ // string if you use the hotel room possible values are 
                  // “Unused“
                  //“used”
 <br />
+
 value_name = ”sun_state“
 value = “Dark“ // string if you use the hotel room possible values are
                // “Dark”
                // “Cloudy”
                // “Sunny”
 <br />
+
 value_name =”air_state“
 value = “Bad Air“ // string if you use the hotel room possible values are 
                   // “Bad Air”
                   // “Used Air” 
                   // “Good Air”
 <br />
+
 value_name = ”light_state“
 value = “On“ // string if you use the hotel room possible values are 
              // “On”
              // “Off”
 <br />
+
 value_name = ”heater_state”
 value = “On“ // string if you use the hotel room possible values are 
              // “On” 
              // “Off”
 <br />
+
 value_name = ” window_state”
 value = “Closed“ // string if you use the hotel room possible values are
                  // “Closed”
                  // “Turned”
                  // “Tilt”
 <br />
+
 value_name = ”blind_state”
 value = “Open“ // string if you use the hotel room possible values are 
                // “Open” 
                // “Closed”                </code>
             </pre>
         </div>
-        <p/>
+        <p />
         <b>Write data</b>
         <p />
-Writing data works the same way as receiving. However, there is another JSON type for it.
+If you want to send data to the server, there is a very similar process as receiving data. You have to send a JSON as descriped below. 
         <div id="setValue">
             <pre>
-                <code class="cs">
+            <code class="cs">
 {
     "type" : "set_value",
     "value_name" : "room_temperature",
@@ -414,9 +425,9 @@ Writing data works the same way as receiving. However, there is another JSON typ
 }                </code>
             </pre>
         </div>
-        <p/>
-However, the data that can be written is identical to those that have been described in terms of receiving data. All values that can be received this way can also be changed on the server. So if you want a temperature history, just program it and send the values to the server according to your idea.
-        </div>
+        <p />
+        The value types that can be written, are similar to those that have been described in terms of receiving data. All values that can be received this way can also be changed on the server. So if you want a temperature history, just program it and send the values to the server according to your idea.
+    </div>
 
         <div id="hotelroom" class="tabcontent">
             <link rel="stylesheet" href="Ressources/css/HotelRoom.css" />
@@ -675,12 +686,12 @@ However, the data that can be written is identical to those that have been descr
             <p />
             <h3>Code for this Democlient</h3>
             <p />
-            If you want to implement your own client, you are might uses this demo implementation, to get an idea how it could be done. This is an html/javascript implementation.
+            If you want to implement your own client, you can use this html/javascript demo implementation, to get an idea how it can be done.
             <p />
             <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" />
             <div id="code">
                 <pre>
-                    <code class="xml">
+                <code class="xml">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
     &lt;head&gt;

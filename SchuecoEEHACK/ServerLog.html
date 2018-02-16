@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table,td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+        }
+    </style>
+
+    <meta charset="utf-8" />
+    <title>Server Overview</title>
+
+    <script src="http://code.jquery.com/jquery-3.1.1.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    window.onload = function () {
+        //var url = "ws://localhost:50911/WebSocketServer.ashx?";
+        var url = "ws://schuecoeehack.azurewebsites.net/WebSocketServer.ashx?";
+        var ws = new WebSocket(url);
+
+        ws.onopen = function () {
+            log("web socket is open");
+            myObj = {
+                "type": "connection_request",
+                "request_type":"server_log"
+            };
+            var myJSON = JSON.stringify(myObj);
+            ws.send(myJSON);
+            log("connected as Server log");
+            log("request rooms");
+            myObj = {
+                "type": "room_request"
+            };
+            var myJSON = JSON.stringify(myObj);
+            ws.send(myJSON);
+        }
+        ws.onmessage = function (e) {
+            myObj = JSON.parse(e.data.toString())
+
+            
+
+            switch (myObj.type) {
+                case "room_update":
+                    number = myObj.room_number;
+                    roomIdentifier = "Room" + number.toString();
+                    isActiveIdentifier = "IsActive" + number.toString();
+                    clientsIdentifier = "Clients" + number.toString();
+                    if (null==document.getElementById(roomIdentifier)) {
+                        s ="<table width='600'> <tr> <td > Room Number: <output id='"+roomIdentifier+"' /> </td><td> Clients: <output id='"+clientsIdentifier+"' /> </td><td> IsActive: <output id='"+isActiveIdentifier+"' /></td></tr></table>";
+                        logTable(s);
+                        
+                    }
+                    document.getElementById(roomIdentifier).value = myObj.room_number;
+                    document.getElementById(clientsIdentifier).value = myObj.connected_clients;
+                    document.getElementById(isActiveIdentifier).value = myObj.is_active;
+                    break;
+            }            
+        }
+
+        function logTable(s) {
+                      var logOutput = document.getElementById("logOutput");
+            document.getElementById("logOutput").innerHTML = s  + logOutput.innerHTML;
+
+        }
+
+        function log(s) {
+            var logOutput = document.getElementById("logOutput");
+            var el = $("#logOutput").after('<hr>' + s);
+        }
+    }
+    </script>
+</head>
+<body>
+    <link rel="stylesheet" href="Ressources/css/Index.css" />
+
+
+    <img src="Ressources/Images/Schueco.png" /><br />
+    <table style="border:hidden;padding:0;">
+        <tr>
+            <td style="border:hidden;padding:0;color:#78b928;font-size:36px;">ENERGY EFFICIENCY HACK </td>
+            <td style="border:hidden;padding:3px;color:#a2b3bc;font-size:36px;"></td>
+            <td style="border:hidden;padding:0;color:#a2b3bc;font-size:36px;">  2018</td>
+        </tr>
+    </table>
+    <h2>Server overview</h2>
+    
+    <pre id="output"></pre>
+    <p><h3>Logging</h3></p>
+    <p id="logOutput">
+
+    </p>
+</body>
+</html>
