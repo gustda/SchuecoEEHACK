@@ -8,6 +8,6 @@ namespace SchuecoEEHACK.Json
     public class ConnectionRequest:AbstractJson
     {
         public string request_type { get; set; }
-        public int room_number { get; set; }
+        public int prop_id { get; set; }
     }
 }

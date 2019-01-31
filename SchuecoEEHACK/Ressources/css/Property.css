@@ -2,31 +2,49 @@
 }
 
 
+#housePic {
+    position: absolute;
+    top: 420px;
+    left: 50px;
+}
+
+#room4thPic {
+    position: absolute;
+    top: 420px;
+    left: 400px;
+}
+
+#room2ndPic {
+    position: absolute;
+    top: 770px;
+    left: 400px;
+}
+
+#boxRoom1Temperature {
+    position: absolute;
+    width: 50px;
+    height: 40px;
+    top: 15px;
+    left: 230px;
+}
+
 #boxAirState {
     position: absolute;
     width: 50px;
     height: 40px;
-    top: 420px;
+    top: 540px;
     left: 230px;
 }
 
-#boxRoomTemperature {
+#boxRoom1Presence {
     position: absolute;
     width: 50px;
     height: 40px;
-    top: 475px;
-    left: 230px;
+    top: 490px;
+    left: 830px;
 }
 
-#boxPresence {
-    position: absolute;
-    width: 50px;
-    height: 40px;
-    top: 535px;
-    left: 230px;
-}
-
-#boxLight {
+#boxRoom1Light {
     position: absolute;
     width: 50px;
     height: 40px;
@@ -34,13 +52,20 @@
     left: 580px;
 }
 
-#boxHeater {
+#boxRoom1Heater {
     position: absolute;
     top: 740px;
     left: 720px;
 }
 
-#boxWindow {
+#boxRoom1Window1 {
+    position: absolute;
+    width: 50px;
+    height: 40px;
+    top: 540px;
+    left: 800px;
+}
+#boxRoom1Window2 {
     position: absolute;
     width: 50px;
     height: 40px;
@@ -48,7 +73,14 @@
     left: 800px;
 }
 
-#boxBlind {
+#boxRoom1Blind1 {
+    position: absolute;
+    width: 50px;
+    height: 40px;
+    top: 540px;
+    left: 1030px;
+}
+#boxRoom1Blind2 {
     position: absolute;
     width: 50px;
     height: 40px;
@@ -56,17 +88,6 @@
     left: 1030px;
 }
 
-#boxAmbientTemperature {
-    position: absolute;
-    top: 340px;
-    left: 1042px;
-}
-
-#boxSunState {
-    position: absolute;
-    top: 395px;
-    left: 1042px;
-}
 
 .button {
     background-color: #78b928;
@@ -89,7 +110,7 @@
     padding: 0px;
     height: 18px;
     width: 50px;
-    font-size:14px;
+    font-size: 14px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -129,14 +150,14 @@
 
 
 .textfield {
-    width: 100px;
+    width: 130px;
     color: #78b928;
     font-size: 26px;
     height: 40px;
 }
 
 .textfield_client {
-    width: 100px;
+    width: 130px;
     color: #78b928;
     font-size: 18px;
     height: 28px;
