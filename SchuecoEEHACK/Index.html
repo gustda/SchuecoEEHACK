@@ -74,6 +74,25 @@
                                 document.getElementById("wind_direction_client").value = myObj.value + "°";       
                                 break;
 
+                            case "userdefined_double_1":
+                                document.getElementById("userdefined_double_1").value = myObj.value;
+                                break;
+                            case "userdefined_double_2":
+                                document.getElementById("userdefined_double_2").value = myObj.value;
+                                break;
+                            case "userdefined_double_3":
+                                document.getElementById("userdefined_double_3").value = myObj.value;
+                                break;
+                            case "userdefined_string_1":
+                                document.getElementById("userdefined_string_1").value = myObj.value;
+                                break;
+                            case "userdefined_string_2":
+                                document.getElementById("userdefined_string_2").value = myObj.value;
+                                break;
+                            case "userdefined_string_3":
+                                document.getElementById("userdefined_string_3").value = myObj.value;
+                                break;
+
                             case "room4th_temperature":
                                 document.getElementById("room4th_temperature").value = myObj.value + "°C";
                                 document.getElementById("room4th_temperature_client").value = myObj.value + "°C";
@@ -399,6 +418,38 @@
             }
         }
 
+        function sendUserdefinedValue(evt, valueName) {
+            switch (valueName) {
+                case "userdefined_double_1":
+                    var text = $("#userdefined_double_1").val();
+                    var value = parseFloat(text);
+                    sendValue(evt, valueName, value)
+                    break;
+                case "userdefined_double_2":
+                    var text = $("#userdefined_double_2").val();
+                    var value = parseFloat(text);
+                    sendValue(evt, valueName, value)
+                    break;
+                case "userdefined_double_3":
+                    var text = $("#userdefined_double_3").val();
+                    var value = parseFloat(text);
+                    sendValue(evt, valueName, value)
+                    break;
+                case "userdefined_string_1":
+                    var text = $("#userdefined_string_1").val();
+                    sendValue(evt, valueName, text)
+                    break;
+                case "userdefined_string_2":
+                    var text = $("#userdefined_string_2").val();
+                    sendValue(evt, valueName, text)
+                    break;
+                case "userdefined_string_3":
+                    var text = $("#userdefined_string_3").val();
+                    sendValue(evt, valueName, text)
+                    break;
+            }
+        }
+
         function sendValue(evt, valueName, value) {
             myObj = {
                 "type": "set_value", "value_name": valueName, "value": value
@@ -605,6 +656,23 @@ value = "On" // string if you use the hotel room possible values are
         </div>
         <p></p>
         The value types that can be written, are similar to those that have been described in terms of receiving data. All values that can be received this way can also be changed on the server. So if you want a temperature history, just program it and send the values to the server according to your idea.
+        <p></p>
+        <p></p>
+        <h4>Userdefined values</h4>
+        it is also possible, to use userdefined values. Each property provides 3 numeric and 3 text values, which can be used very free. It is not possible to rename the values. In the propertytab you are able to insert any value you want to and send it to the server. If anything broke, e.g. error by casting the value, you get the server information in the textfield. Here he names of the userdefined values:
+        <div id="userdefined">
+            <pre>
+                <code class="cs">
+userdefined_double_1
+userdefined_double_2
+userdefined_double_3
+userdefined_string_1
+userdefined_string_2
+userdefined_string_3
+                </code>
+            </pre>
+        </div>
+        <p></p>
     </div>
 
     <div id="property" class="tabcontent">
@@ -721,6 +789,40 @@ value = "On" // string if you use the hotel room possible values are
                                                 </tr>
                                             </table>
                                         </td>
+                                    </tr>
+
+                                    <tr><td><h4>Userdefined</h4></td></tr>
+                                    <tr>
+                                        <td>Numeric 1</td>
+                                        <td><input class="textfield" id="userdefined_double_1" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_double_1')">Send</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Numeric 2</td>
+                                        <td><input class="textfield" id="userdefined_double_2" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_double_2')">Send</button></td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Numeric 3</td>
+                                        <td><input class="textfield" id="userdefined_double_3" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_double_3')">Send</button></td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr>
+                                        <td>Text 1</td>
+                                        <td><input class="textfield" id="userdefined_string_1" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_string_1')">Send</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Text 2</td>
+                                        <td><input class="textfield" id="userdefined_string_2" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_string_2')">Send</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Text 3</td>
+                                        <td><input class="textfield" id="userdefined_string_3" value="" /></td>
+                                        <td><button class="windowbutton" onclick="sendUserdefinedValue(event,'userdefined_string_3')">Send</button></td>
                                     </tr>
                                 </table>
                             </td>

@@ -15,6 +15,13 @@ namespace SchuecoEEHACK
         public double WindSpeed { get; set; }
         public double WindDirection { get; set; }
 
+        public double UserDefinedDouble1 { get; set; }
+        public double UserDefinedDouble2 { get; set; }
+        public double UserDefinedDouble3 { get; set; }
+        public string UserDefinedString1 { get; set; }
+        public string UserDefinedString2 { get; set; }
+        public string UserDefinedString3 { get; set; }
+
 
         public double Room4thTemperature { get; set; }
         public string Room4thPresenceState { get; set; }
@@ -38,6 +45,13 @@ namespace SchuecoEEHACK
             SunState = "Cloudy";
             WindSpeed = 5;
             WindDirection = 270;
+
+            UserDefinedDouble1 = 0;
+            UserDefinedDouble2 = 0;
+            UserDefinedDouble3 = 0;
+            UserDefinedString1 = "none ";
+            UserDefinedString2 = "none 2";
+            UserDefinedString3 = "none 3";
 
             Room4thTemperature = 18;
             Room4thPresenceState = "Unused";

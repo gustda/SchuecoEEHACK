@@ -163,6 +163,62 @@ namespace SchuecoEEHACK
                                 SendValue("wind_direction");
                                 break;
 
+                            case "userdefined_double_1":
+                                var userdefined_double_1 = Convert.ToDouble(set_value.value);
+                                foreach(var room in Rooms)
+                                {
+                                    if(room.Number== RoomNumber)
+                                    { room.UserDefinedDouble1 = userdefined_double_1; }
+                                }
+                                SendValue("userdefined_double_1");
+                                break;
+                            case "userdefined_double_2":
+                                var userdefined_double_2 = Convert.ToDouble(set_value.value);
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    { room.UserDefinedDouble2 = userdefined_double_2; }
+                                }
+                                SendValue("userdefined_double_2");
+                                break;
+                            case "userdefined_double_3":
+                                var userdefined_double_3 = Convert.ToDouble(set_value.value);
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    { room.UserDefinedDouble3 = userdefined_double_3; }
+                                }
+                                SendValue("userdefined_double_3");
+                                break;
+                            case "userdefined_string_1":
+                                var userdefined_string_1 = set_value.value.ToString();
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    { room.UserDefinedString1 = userdefined_string_1; }
+                                }
+                                SendValue("userdefined_string_1");
+                                break;
+                            case "userdefined_string_2":
+                                var userdefined_string_2 = set_value.value.ToString();
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    { room.UserDefinedString2 = userdefined_string_2; }
+                                }
+                                SendValue("userdefined_string_2");
+                                break;
+                            case "userdefined_string_3":
+                                var userdefined_string_3 = set_value.value.ToString();
+                                foreach (var room in Rooms)
+                                {
+                                    if (room.Number == RoomNumber)
+                                    { room.UserDefinedString3 = userdefined_string_3; }
+                                }
+                                SendValue("userdefined_string_3");
+                                break;
+
+
                             case "room4th_temperature":
                                 var room4th_temperature = Convert.ToDouble(set_value.value);
                                 foreach(var room in Rooms)
@@ -432,6 +488,36 @@ namespace SchuecoEEHACK
                     SendJsonToAllClients(json);
                     break;
 
+                case "userdefined_double_1":
+                    var userdefined_double_1 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_1", value = GetRoom().UserDefinedDouble1 };
+                    json = JsonConvert.SerializeObject(userdefined_double_1);
+                    SendJsonToAllClients(json);
+                    break;
+                case "userdefined_double_2":
+                    var userdefined_double_2 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_2", value = GetRoom().UserDefinedDouble2 };
+                    json = JsonConvert.SerializeObject(userdefined_double_2);
+                    SendJsonToAllClients(json);
+                    break;
+                case "userdefined_double_3":
+                    var userdefined_double_3 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_3", value = GetRoom().UserDefinedDouble3 };
+                    json = JsonConvert.SerializeObject(userdefined_double_3);
+                    SendJsonToAllClients(json);
+                    break;
+                case "userdefined_string_1":
+                    var userdefined_string_1 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_1", value = GetRoom().UserDefinedString1 };
+                    json = JsonConvert.SerializeObject(userdefined_string_1);
+                    SendJsonToAllClients(json);
+                    break;
+                case "userdefined_string_2":
+                    var userdefined_string_2 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_2", value = GetRoom().UserDefinedString2 };
+                    json = JsonConvert.SerializeObject(userdefined_string_2);
+                    SendJsonToAllClients(json);
+                    break;
+                case "userdefined_string_3":
+                    var userdefined_string_3 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_3", value = GetRoom().UserDefinedString3 };
+                    json = JsonConvert.SerializeObject(userdefined_string_3);
+                    SendJsonToAllClients(json);
+                    break;
 
 
                 case "room4th_temperature":
@@ -548,6 +634,19 @@ namespace SchuecoEEHACK
                 Send(JsonConvert.SerializeObject(windSpeed));
                 var windDirection = new Json.SetValue() { type = "property_update", value_name = "wind_direction", value = GetRoom().WindDirection };
                 Send(JsonConvert.SerializeObject(windDirection));
+
+                var userdefined_double_1 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_1", value = GetRoom().UserDefinedDouble1};
+                Send(JsonConvert.SerializeObject(userdefined_double_1));
+                var userdefined_double_2 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_2", value = GetRoom().UserDefinedDouble2 };
+                Send(JsonConvert.SerializeObject(userdefined_double_2));
+                var userdefined_double_3 = new Json.SetValue() { type = "property_update", value_name = "userdefined_double_3", value = GetRoom().UserDefinedDouble3 };
+                Send(JsonConvert.SerializeObject(userdefined_double_3));
+                var userdefined_string_1 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_1", value = GetRoom().UserDefinedString1};
+                Send(JsonConvert.SerializeObject(userdefined_string_1));
+                var userdefined_string_2 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_2", value = GetRoom().UserDefinedString2 };
+                Send(JsonConvert.SerializeObject(userdefined_string_2));
+                var userdefined_string_3 = new Json.SetValue() { type = "property_update", value_name = "userdefined_string_3", value = GetRoom().UserDefinedString3 };
+                Send(JsonConvert.SerializeObject(userdefined_string_3));
 
                 var room4thTemp = new Json.SetValue() { type = "property_update", value_name = "room4th_temperature", value = GetRoom().Room4thTemperature };
                 Send(JsonConvert.SerializeObject(room4thTemp));
